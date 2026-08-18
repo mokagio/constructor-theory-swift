@@ -3,7 +3,7 @@ import Testing
 
 struct `Task Tests` {
 
-  func `dummy test`() {
+  @Test func `dummy test`() {
     _ = Task(
       transformation: Transformation(
         input: Attribute(substrates: [Substrate()]),
