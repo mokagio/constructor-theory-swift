@@ -7,8 +7,14 @@ public struct Transformation {
   let output: Attribute
 }
 
-public struct Attribute {
-  let substrates: [Substrate]
+public struct Attribute {}
+
+struct Substrate<S: State> {
+  let states: Set<S>
 }
 
-public struct Substrate {}
+protocol State: Hashable {
+  func hasProperty(_ property: any Property) -> Bool
+}
+
+protocol Property {}
