@@ -7,17 +7,16 @@ The package is the tidied-up result of that derivation — when the two disagree
 ## Commands
 
 ```sh
-make build   # swift build
-make test    # swift test — Swift Testing, no XCTest
-make format  # swift format --in-place
-make lint    # swift format lint --strict
-make clean
+swift build
+swift test
+swift format --in-place --parallel --recursive Package.swift Sources Tests
+swift format lint --strict --parallel --recursive Package.swift Sources Tests
 ```
 
 ## Conventions
 
 - Swift 6.3 tools, Swift 6 language mode.
 - Tests use [Swift Testing](https://developer.apple.com/documentation/testing) (`@Suite`, `@Test`, `#expect`). Do not add XCTest.
-- Formatting is `swift-format` with the config in `.swift-format`: two-space indent, 100-column lines. Run `make format` before committing.
+- Formatting is `swift-format` with the config in `.swift-format`: two-space indent, 100-column lines. Format before committing.
 - One concept per file, named after it (`Task.swift`).
 - Doc comments carry the paper's definition of a type; keep them to the definition.
