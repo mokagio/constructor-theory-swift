@@ -5,11 +5,19 @@ import PackageDescription
 let package = Package(
   name: "ConstructorTheory",
   products: [
-    .library(name: "ConstructorTheory", targets: ["ConstructorTheory"])
+    .library(
+      name: "ConstructorTheory",
+      targets: ["ConstructorTheory"]
+    )
   ],
   targets: [
-    .target(name: "ConstructorTheory"),
-    .testTarget(name: "ConstructorTheoryTests", dependencies: ["ConstructorTheory"]),
+    .target(
+      name: "ConstructorTheory"
+    ),
+    .testTarget(
+      name: "ConstructorTheoryTests",
+      dependencies: ["ConstructorTheory"]
+    ),
   ],
   swiftLanguageModes: [.v6]
 )
