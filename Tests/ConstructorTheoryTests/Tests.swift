@@ -63,3 +63,63 @@ struct `Attribute Tests` {
     #expect(Attribute(substrate: tailsOnly, property: Facing.heads).states.isEmpty)
   }
 }
+
+enum Parity: Property {
+  case even
+  case odd
+}
+
+enum Half: Property {
+  case low
+  case high
+}
+
+enum Pip: Int, State {
+  case one = 1
+  case two
+  case three
+  case four
+  case five
+  case six
+
+  var parity: Parity { rawValue.isMultiple(of: 2) ? .even : .odd }
+
+  var half: Half { rawValue > 3 ? .high : .low }
+
+  func hasProperty(_ property: any Property) -> Bool {
+    switch property {
+    case let parity as Parity:
+      return parity == self.parity
+    case let half as Half:
+      return half == self.half
+    default:
+      return false
+    }
+  }
+}
+
+var die: Substrate<Pip> {
+  Substrate(states: [.one, .two, .three, .four, .five, .six])
+}
+
+struct `Die Tests` {
+
+  @Test func `an attribute gathers every state sharing the property`() {
+    #expect(Attribute(substrate: die, property: Parity.even).states == [.two, .four, .six])
+  }
+
+  @Test func `even and odd split the die between them`() {
+    let even = Attribute(substrate: die, property: Parity.even)
+    let odd = Attribute(substrate: die, property: Parity.odd)
+
+    #expect(even.states.union(odd.states) == die.states)
+    #expect(even.states.isDisjoint(with: odd.states))
+  }
+
+  @Test func `properties of different kinds cut across each other`() {
+    let even = Attribute(substrate: die, property: Parity.even)
+    let high = Attribute(substrate: die, property: Half.high)
+
+    #expect(even.states.intersection(high.states) == [.four, .six])
+  }
+}
