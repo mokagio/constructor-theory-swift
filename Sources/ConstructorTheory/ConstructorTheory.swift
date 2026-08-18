@@ -1,13 +1,19 @@
-public struct Task {
-  let transformation: Transformation
+struct Task<S: State> {
+  let transformation: Transformation<S>
 }
 
-public struct Transformation {
-  let input: Attribute
-  let output: Attribute
+struct Transformation<S: State> {
+  let input: Attribute<S>
+  let output: Attribute<S>
 }
 
-public struct Attribute {}
+struct Attribute<S: State> {
+  let states: Set<S>
+
+  init(substrate: Substrate<S>, property: any Property) {
+    states = substrate.states.filter { $0.hasProperty(property) }
+  }
+}
 
 struct Substrate<S: State> {
   let states: Set<S>
