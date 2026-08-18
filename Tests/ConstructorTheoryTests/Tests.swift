@@ -2,23 +2,6 @@ import Testing
 
 @testable import ConstructorTheory
 
-enum Facing: Property {
-  case heads
-  case tails
-}
-
-struct CoinState: State {
-  let facing: Facing
-
-  func hasProperty(_ property: any Property) -> Bool {
-    property as? Facing == facing
-  }
-}
-
-var coin: Substrate<CoinState> {
-  Substrate(states: [CoinState(facing: .heads), CoinState(facing: .tails)])
-}
-
 struct `Task Tests` {
 
   @Test func `dummy test`() {
@@ -62,44 +45,6 @@ struct `Attribute Tests` {
 
     #expect(Attribute(substrate: tailsOnly, property: Facing.heads).states.isEmpty)
   }
-}
-
-enum Parity: Property {
-  case even
-  case odd
-}
-
-enum Half: Property {
-  case low
-  case high
-}
-
-enum Pip: Int, State {
-  case one = 1
-  case two
-  case three
-  case four
-  case five
-  case six
-
-  var parity: Parity { rawValue.isMultiple(of: 2) ? .even : .odd }
-
-  var half: Half { rawValue > 3 ? .high : .low }
-
-  func hasProperty(_ property: any Property) -> Bool {
-    switch property {
-    case let parity as Parity:
-      return parity == self.parity
-    case let half as Half:
-      return half == self.half
-    default:
-      return false
-    }
-  }
-}
-
-var die: Substrate<Pip> {
-  Substrate(states: [.one, .two, .three, .four, .five, .six])
 }
 
 struct `Die Tests` {
