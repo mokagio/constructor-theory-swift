@@ -25,10 +25,11 @@ struct Task {
 > ...a transformation in the form of an ordered pair of input and output “attributes”...
 
 ```swift
-// Not sure what ordered means
-struct Transformation<Input, Output> {
-  let input: Input
-  let output: Output
+struct Attribute {}
+
+struct Transformation {
+  let input: Attribute
+  let output: Attribute
 }
 
 struct Task {
@@ -38,3 +39,11 @@ struct Task {
 
 
 > ...“attributes”, representing physical features of systems on which a task can be performed, which are called “substrates”.
+
+```swift
+struct Attribute {
+  let substrates: [Substrate]
+}
+
+struct Substrate {}
+```
