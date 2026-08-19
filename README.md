@@ -115,14 +115,7 @@ Definitely not ready to tackle quantum theory!
 
 Okay, that's tractable.
 
-First, to determine if Swift sets are disjoint we need to be able to compare them, which requires `Hashable` conformance.
-This is a language implementation detail, like the earlier generic `S`, irrelevant to Constructor Theory.
-
-```swift
-struct Attribute<S: State>: Hashable { ...  }
-```
-
-Then, we can implement `Variable` with an initializer condition that enforces the disjointness.
+We can implement `Variable` with an initializer condition that enforces the disjointness.
 
 ```swift
 struct Variable<S: State> {
@@ -145,3 +138,17 @@ struct Variable<S: State> {
   }
 }
 ```
+
+Notice that to have `State` in the associated value of the error enum, we need to make it `Sendable`.
+This is a language implementation detail, like the earlier generic `S`, irrelevant to Constructor Theory.
+
+```swift
+protocol State: Hashable, Sendable { ... }
+```
+
+Additionally, for `Variable` to hold a `Set` of disjoint `Attribute`, `Attribute` needs to be `Hashable`, too:
+
+```swift
+struct Attribute<S: State>: Hashable { ...  }
+```
+
