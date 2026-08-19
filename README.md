@@ -100,3 +100,48 @@ struct Transformation<S: State> {
 
 That every component is defined in terms of the same generic `S` makes a structural claim: input and output are attributes of the same kind of state.
 This seems to make sense with the paper so far.
+
+Moving on.
+
+> States are defined by each subsidiary theory on a space which must be endowed with at least a topology.
+
+That sounds like something that might come into play later, if/when trying to run the implementation on _subsidiary theories_.
+
+> In quantum theory, for example, ...
+
+Definitely not ready to tackle quantum theory!
+
+> A _variable_ is defined as a set of disjoint attributes
+
+Okay, that's tractable.
+
+First, to determine if Swift sets are disjoint we need to be able to compare them, which requires `Hashable` conformance.
+This is a language implementation detail, like the earlier generic `S`, irrelevant to Constructor Theory.
+
+```swift
+struct Attribute<S: State>: Hashable { ...  }
+```
+
+Then, we can implement `Variable` with an initializer condition that enforces the disjointness.
+
+```swift
+struct Variable<S: State> {
+  enum Failure: Error, Equatable {
+    case attributesNotDisjoint(Attribute<S>, sharing: Set<S>)
+  }
+
+  let attributes: Set<Attribute<S>>
+
+  init(_ attributes: Set<Attribute<S>>) throws(Failure) {
+    var union: Set<S> = []
+    for attribute in attributes {
+      let shared = union.intersection(attribute.states)
+      guard shared.isEmpty else {
+        throw .attributesNotDisjoint(attribute, sharing: shared)
+      }
+      union.formUnion(attribute.states)
+    }
+    self.attributes = attributes
+  }
+}
+```

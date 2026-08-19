@@ -70,3 +70,38 @@ struct `Attribute Tests` {
     #expect(even.states.intersection(high.states) == [.four, .six])
   }
 }
+
+struct `Variable Tests` {
+
+  @Test func `attributes that share no state make a variable`() throws {
+    let heads = Attribute(substrate: coin, property: Facing.heads)
+    let tails = Attribute(substrate: coin, property: Facing.tails)
+    let even = Attribute(substrate: die, property: Parity.even)
+    let odd = Attribute(substrate: die, property: Parity.odd)
+
+    #expect(try Variable([heads, tails]).attributes.count == 2)
+    #expect(try Variable([even, odd]).attributes.count == 2)
+  }
+
+  @Test func `attributes that share a state do not`() throws {
+    let even = Attribute(substrate: die, property: Parity.even)
+    let high = Attribute(substrate: die, property: Half.high)
+
+    let failure = try #require(
+      #expect(throws: Variable<Pip>.Failure.self) {
+        try Variable([even, high])
+      }
+    )
+
+    if case .attributesNotDisjoint(_, let shared) = failure {
+      #expect(shared == [.four, .six])
+    }
+  }
+
+  @Test func `two properties selecting the same states are one attribute`() throws {
+    let even = Attribute(substrate: die, property: Parity.even)
+    let alsoEven = Attribute(substrate: die, property: Parity.even)
+
+    #expect(try Variable([even, alsoEven]).attributes.count == 1)
+  }
+}

@@ -7,7 +7,7 @@ struct Transformation<S: State> {
   let output: Attribute<S>
 }
 
-struct Attribute<S: State> {
+struct Attribute<S: State>: Hashable {
   let states: Set<S>
 
   init(substrate: Substrate<S>, property: any Property) {
@@ -19,7 +19,7 @@ struct Substrate<S: State> {
   let states: Set<S>
 }
 
-protocol State: Hashable {
+protocol State: Hashable, Sendable {
   func hasProperty(_ property: any Property) -> Bool
 }
 
