@@ -88,14 +88,26 @@ struct `Variable Tests` {
     let high = Attribute(substrate: die, property: Half.high)
 
     let failure = try #require(
-      #expect(throws: Variable<Pip>.Failure.self) {
+      #expect(throws: NotDisjoint<Pip>.self) {
         try Variable([even, high])
       }
     )
 
-    if case .attributesNotDisjoint(_, let shared) = failure {
-      #expect(shared == [.four, .six])
-    }
+    #expect(failure == NotDisjoint(attributes: [even, high], sharedStates: [.four, .six]))
+  }
+
+  @Test func `only the attributes touching a shared state are reported`() throws {
+    let even = Attribute(substrate: die, property: Parity.even)
+    let high = Attribute(substrate: die, property: Half.high)
+    let one = Attribute(substrate: Substrate(states: [Pip.one]), property: Parity.odd)
+
+    let failure = try #require(
+      #expect(throws: NotDisjoint<Pip>.self) {
+        try Variable([even, high, one])
+      }
+    )
+
+    #expect(failure == NotDisjoint(attributes: [even, high], sharedStates: [.four, .six]))
   }
 
   @Test func `two properties selecting the same states are one attribute`() throws {

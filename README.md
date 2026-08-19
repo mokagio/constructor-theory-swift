@@ -119,25 +119,16 @@ We can implement `Variable` with an initializer condition that enforces the disj
 
 ```swift
 struct Variable<S: State> {
-  enum Failure: Error, Equatable {
-    case attributesNotDisjoint(Attribute<S>, sharing: Set<S>)
-  }
-
   let attributes: Set<Attribute<S>>
 
-  init(_ attributes: Set<Attribute<S>>) throws(Failure) {
-    var union: Set<S> = []
-    for attribute in attributes {
-      let shared = union.intersection(attribute.states)
-      guard shared.isEmpty else {
-        throw .attributesNotDisjoint(attribute, sharing: shared)
-      }
-      union.formUnion(attribute.states)
-    }
+  init(_ attributes: Set<Attribute<S>>) throws(NotDisjoint<S>) {
+    try attributes.requireDisjoint()
     self.attributes = attributes
   }
 }
 ```
+
+The logic to ensure the variable set is _a set of disjoint attributes_ is custom code, but it's an implementation detail not worth exploring here.
 
 Notice that to have `State` in the associated value of the error enum, we need to make it `Sendable`.
 This is a language implementation detail, like the earlier generic `S`, irrelevant to Constructor Theory.
